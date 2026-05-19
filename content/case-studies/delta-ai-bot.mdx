@@ -1,0 +1,61 @@
+---
+title: Delta AI Trading Bot
+client: Confidential — Delta Exchange India
+tag: Trading Automation
+date: 2025-05-19
+stack: Python · Ollama · Delta Exchange API · SQLite · Rich
+outcome: AI-powered derivatives bot, 85 tests passing, paper + live modes
+slug: delta-ai-bot
+---
+
+## Challenge
+
+The client required an automated trading system capable of operating on Delta Exchange India's BTC and ETH perpetual futures markets around the clock. The requirements were precise: real-time signal generation using a locally-hosted AI model, full paper and live trading modes, a structured risk management layer, and a terminal dashboard for live monitoring — all without relying on third-party trading platforms or black-box signal providers.
+
+The core challenge was building a production-grade system from scratch: one that could handle WebSocket data feeds, generate AI signals reliably under latency constraints, manage positions with dynamic sizing, and enforce daily loss limits automatically.
+
+## Approach
+
+The architecture was designed before any code was written. A ten-module system was planned, covering exchange connectivity, data ingestion, signal generation, risk management, order execution, and logging — each module independently testable and clearly bounded.
+
+The AI signal engine was built around a locally-hosted Ollama model (qwen2.5:3b), removing dependency on external AI APIs and associated latency. Signals are generated per 15-minute candle close using a structured prompt that encodes current indicators, recent trade history, and open position state.
+
+Risk controls were treated as first-class infrastructure: a circuit breaker with a configurable daily loss limit, a dynamic position sizer calibrated to balance and stop-loss distance, and stop-loss / take-profit management — all wired in before execution logic was written.
+
+## Architecture
+
+The system is structured as an async Python application with ten discrete modules:
+
+- **Exchange Client** — HMAC-authenticated REST wrapper for Delta Exchange India, with retry logic on 429/500 responses
+- **Data Feed** — WebSocket-based OHLCV streaming with historical buffer loading, auto-reconnect, and 30-second keepalive pings
+- **Signal Engine** — Ollama qwen2.5:3b inference via structured prompt; Zod-equivalent validation on response JSON
+- **Feature Builder** — Computes RSI, EMA (9/21), Bollinger Bands, ATR, and current price from the candle buffer
+- **Circuit Breaker** — Monitors cumulative daily PnL; triggers a kill switch and closes all positions at configurable loss threshold
+- **Position Sizer** — Dynamic sizing based on per-trade risk percentage and stop-loss distance
+- **Stop Manager** — Calculates stop-loss and take-profit levels; trailing stop support
+- **Paper Engine** — Full paper trading simulation with slippage, fee modelling, SL/TP exit detection
+- **Live Engine** — Order submission to Delta Exchange India with fill confirmation
+- **Terminal Dashboard** — Real-time Rich dashboard showing balance, open positions, last AI signal, performance metrics, and circuit breaker status in IST timezone
+
+## Outcome
+
+The system was delivered with 85 passing unit tests across all modules. Every module was validated with isolated tests covering normal operation, edge cases, and error handling.
+
+Key validated behaviours:
+
+- Circuit breaker triggers correctly at the configured daily loss threshold and closes all positions
+- Paper engine simulates slippage and taker fees, detects SL/TP exits per candle
+- Signal engine validates AI response structure, falls back to HOLD on invalid or low-confidence output
+- WebSocket feed reconnects automatically with exponential backoff up to 10 attempts
+- Position sizer respects minimum order size and leverage cap constraints
+- All timestamps are displayed to the user in IST (UTC+5:30); internal calculations remain in UTC
+
+## Lessons Learned
+
+**Locally-hosted AI is viable for trading signals** — running Ollama locally removed API latency as a blocker, but prompt engineering for structured JSON output required iteration. The validation layer (checking signal field, confidence range, and reasoning presence) proved essential.
+
+**Risk infrastructure must be built before execution** — wiring the circuit breaker and position sizer before building the live execution engine prevented architectural shortcuts. The kill switch operates independently of signal logic.
+
+**Paper mode is not optional** — the paper engine caught three position sizing bugs and two SL/TP calculation errors before a single live order was placed. The investment in accurate simulation paid for itself immediately.
+
+**Test coverage at 85 tests is a floor, not a ceiling** — the 85-test suite validated module contracts. Integration tests across the full candle cycle were run manually and are the next priority for automated coverage.
