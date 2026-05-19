@@ -12,7 +12,6 @@ const solutionLinks = [
 
 const companyLinks = [
   { label: 'About', href: '/about' },
-  { label: 'Case Studies', href: '/case-studies' },
   { label: 'Products', href: '/products' },
   { label: 'Contact', href: '/contact' },
 ]

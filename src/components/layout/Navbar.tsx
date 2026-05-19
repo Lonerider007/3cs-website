@@ -19,7 +19,6 @@ const solutions = [
 const navLinks = [
   { label: 'Solutions', href: '/solutions', dropdown: solutions },
   { label: 'Products', href: '/products' },
-  { label: 'Case Studies', href: '/case-studies' },
   { label: 'About', href: '/about' },
 ]
 
