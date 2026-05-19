@@ -21,7 +21,7 @@ function GeometricVisual() {
 
 export function AboutTeaser() {
   return (
-    <Section bgColor="#FFFFFF">
+    <Section bgColor="#FFFFFF" className="pt-10 md:pt-14 lg:pt-16">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <SlideUp>
