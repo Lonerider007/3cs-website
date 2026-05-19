@@ -16,7 +16,7 @@ export function CaseStudiesPreview() {
         <SlideUp>
           <div className="mb-12 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-              <Tag className="mb-3">Case Studies</Tag>
+              <Tag className="mb-3">Our Work</Tag>
               <h2 className="text-3xl md:text-4xl font-bold tracking-[-0.01em] text-[#1D1D1F]">
                 Built. Delivered. Documented.
               </h2>
@@ -32,7 +32,32 @@ export function CaseStudiesPreview() {
 
         <LazyMotion features={domAnimation}>
           <StaggerChildren className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Card 1 — Delta AI Trading Bot */}
+
+            {/* Card 1 — ORBOX */}
+            <m.div variants={itemVariants}>
+              <Link href="/products">
+                <GlassCard hover className="h-full flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="live">Live</Badge>
+                    <Tag>Cognitive Runtime</Tag>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#1D1D1F] leading-snug">
+                      ORBOX
+                    </h3>
+                    <p className="mt-2 text-sm text-[#6E6E73] leading-relaxed">
+                      A synthetic cognitive brain layer that sits between any LLM and the user.
+                      Persistent memory, adaptive recall, and intelligent routing — across sessions.
+                    </p>
+                  </div>
+                  <div className="mt-auto pt-3 border-t border-[rgba(0,0,0,0.06)]">
+                    <p className="text-xs text-[#86868B]">Domain: Cognitive AI · Status: Production</p>
+                  </div>
+                </GlassCard>
+              </Link>
+            </m.div>
+
+            {/* Card 2 — Delta AI Trading Bot */}
             <m.div variants={itemVariants}>
               <Link href="/case-studies/delta-ai-bot">
                 <GlassCard hover className="h-full flex flex-col gap-4">
@@ -45,32 +70,25 @@ export function CaseStudiesPreview() {
                       Delta AI Trading Bot
                     </h3>
                     <p className="mt-2 text-sm text-[#6E6E73] leading-relaxed">
-                      AI-powered derivatives trading bot for Delta Exchange India. Paper and live modes,
-                      85 tests passing, full risk management layer.
+                      AI-powered derivatives trading system for crypto futures markets.
+                      Autonomous signal generation, risk management, and 24/7 execution.
                     </p>
                   </div>
                   <div className="mt-auto pt-3 border-t border-[rgba(0,0,0,0.06)]">
-                    <p className="text-xs text-[#86868B]">Client: Confidential · Stack: Python · Ollama</p>
+                    <p className="text-xs text-[#86868B]">Domain: Fintech · Status: Production</p>
                   </div>
                 </GlassCard>
               </Link>
             </m.div>
 
-            {/* Card 2 — Coming Soon */}
+            {/* Card 3 — Coming Soon */}
             <m.div variants={itemVariants}>
-              <GlassCard className="h-full flex flex-col gap-4 opacity-50">
+              <GlassCard className="h-full flex flex-col gap-4 opacity-40 hidden lg:flex">
                 <Badge variant="coming-soon">Coming Soon</Badge>
-                <p className="text-sm text-[#86868B] italic">Case study in progress.</p>
+                <p className="text-sm text-[#86868B] italic">Next case study in progress.</p>
               </GlassCard>
             </m.div>
 
-            {/* Card 3 — Coming Soon */}
-            <m.div variants={itemVariants}>
-              <GlassCard className="h-full flex flex-col gap-4 opacity-50 hidden lg:flex">
-                <Badge variant="coming-soon">Coming Soon</Badge>
-                <p className="text-sm text-[#86868B] italic">Case study in progress.</p>
-              </GlassCard>
-            </m.div>
           </StaggerChildren>
         </LazyMotion>
       </Container>
