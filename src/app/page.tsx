@@ -3,7 +3,6 @@ import { siteConfig } from '@/lib/metadata'
 import { HeroSection } from '@/components/sections/HeroSection'
 import { ServicesStrip } from '@/components/sections/ServicesStrip'
 import { AboutTeaser } from '@/components/sections/AboutTeaser'
-import { CaseStudiesPreview } from '@/components/sections/CaseStudiesPreview'
 import { CTABand } from '@/components/sections/CTABand'
 
 export const metadata: Metadata = {
@@ -17,7 +16,6 @@ export default function HomePage() {
       <HeroSection />
       <ServicesStrip />
       <AboutTeaser />
-      <CaseStudiesPreview />
       <CTABand />
     </>
   )

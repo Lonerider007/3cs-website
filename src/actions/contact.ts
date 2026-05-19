@@ -12,15 +12,7 @@ const contactSchema = z.object({
   brief: z.string().min(20, 'Please provide at least 20 characters describing your project'),
 })
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-})
+const TO_EMAIL = 'samsungsumitv461@gmail.com'
 
 export async function sendContactEmail(
   data: ContactFormData,
@@ -32,10 +24,24 @@ export async function sendContactEmail(
 
   const { name, email, company, service, brief } = parsed.data
 
+  const gmailUser = process.env.GMAIL_USER
+  const gmailPass = process.env.GMAIL_APP_PASSWORD
+
+  if (!gmailUser || !gmailPass) {
+    return { success: false, error: 'Email service is not configured. Please contact us directly.' }
+  }
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: { user: gmailUser, pass: gmailPass },
+  })
+
   try {
     await transporter.sendMail({
-      from: process.env.GMAIL_USER,
-      to: 'samsungsumitv461@gmail.com',
+      from: gmailUser,
+      to: TO_EMAIL,
       replyTo: email,
       subject: `New enquiry from ${name} — ${service}`,
       html: `
@@ -50,12 +56,13 @@ export async function sendContactEmail(
           <h3 style="margin: 24px 0 8px; font-size: 15px; color: #6E6E73; font-weight: 600;">Project Brief</h3>
           <p style="margin: 0; line-height: 1.6; white-space: pre-wrap;">${brief}</p>
           <hr style="margin: 32px 0; border: none; border-top: 1px solid #f0f0f0;" />
-          <p style="margin: 0; font-size: 12px; color: #86868B;">Sent from the 3Cs AI Innovations website contact form.</p>
+          <p style="margin: 0; font-size: 12px; color: #86868B;">Sent from 3Cs AI Innovations website · ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST</p>
         </div>
       `,
     })
     return { success: true }
-  } catch {
-    return { success: false, error: 'Failed to send message. Please try again.' }
+  } catch (err) {
+    console.error('Contact form send error:', err)
+    return { success: false, error: 'Failed to send message. Please try again or email us directly.' }
   }
 }
